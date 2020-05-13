@@ -20,6 +20,8 @@ It is opinionated to simplify usage.
 
 3. Supports 1-time use credentials, to prevent replay attack.
 
+4. Password is stored hashed at rest.
+
 ## Sample output
 
 ```bash
