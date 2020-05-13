@@ -6,7 +6,7 @@ const SITEKEY = genPKI(); //  This public key should be published and made avail
 
 const raw = 'thisIsASECUREPA$$WORD, a very very long long one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis. Tristique senectus et netus et malesuada fames ac turpis. Semper risus in hendrerit gravida. Sed pulvinar proin gravida hendrerit lectus a. Nam libero justo laoreet sit amet. Viverra accumsan in nisl nisi scelerisque eu.';
 
-const credentials = {
+const credentials: Credentials = {
   email: 'test@example.org',
   password: raw,
   t: Date.now(),
@@ -15,12 +15,17 @@ const credentials = {
 // Public key must be published, ideally at https://domain/pub.key
 const transmitPayload = transmit(credentials, SITEKEY.publicKey);
 
-console.log('Send the following over:');
+console.log(`User's log in entry:`);
+console.log(credentials);
+
+console.log();
+
+console.log('After client-side encryption, send the following over API:');
 console.log(transmitPayload);
 
 console.log();
 
-console.log('Validate transmission payload:');
+console.log('Validate the transmission payload at server-side:');
 const valid = isValidLogin(transmitPayload);
 console.log(valid);
 
