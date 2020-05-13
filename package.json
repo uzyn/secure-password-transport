@@ -1,0 +1,16 @@
+{
+  "name": "secure-password-transport",
+  "version": "1.0.0",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^14.0.1",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
+  },
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "npm start"
+  },
+  "author": "",
+  "license": "ISC"
+}
