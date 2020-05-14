@@ -2,9 +2,9 @@ import * as crypto from 'crypto';
 
 const SALT = 'iv10UoLFAZPm7YJJ3XWLSliiFsn8GonP1VRvooJA7hqmm4hdcL5LG2x4Qq4Q5yh';
 const ENCRYPT_PASSWORD = 'oo46jqV6P99ZgyNTjeQmvNtqysChbLfVaEHNbTlfwuESq7ASrAgwo7elaiNhxXe';
-const SITEKEY = genPKI(); //  This public key should be published and made available
+const SITEKEY = genPKI(); //  The public key of it should be published and made available publicly
 
-const raw = 'thisIsASECUREPA$$WORD, a very very long long one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis. Tristique senectus et netus et malesuada fames ac turpis. Semper risus in hendrerit gravida. Sed pulvinar proin gravida hendrerit lectus a. Nam libero justo laoreet sit amet. Viverra accumsan in nisl nisi scelerisque eu.';
+const raw = 'thisIsASECUREPA$$WORD, a very long password. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis. Tristique senectus et netus et malesuada fames ac turpis. Semper risus in hendrerit gravida. Sed pulvinar proin gravida hendrerit lectus a. Nam libero justo laoreet sit amet. Viverra accumsan in nisl nisi scelerisque eu.';
 
 const credentials: Credentials = {
   email: 'test@example.org',
@@ -38,12 +38,17 @@ interface TransmissionPayload {
   iv: string,
 }
 
+interface PreAsyncEncryptedTransmissionPayload {
+  ciphertext: Buffer,
+  key: Buffer,
+  iv: Buffer,
+}
+
 interface Credentials {
   email: string,
   password: string,
   t: number,
 }
-
 
 
 // -------------------- Utils --------------------
@@ -63,11 +68,11 @@ function genPKI() {
   return pki;
 }
 
-function hash(raw) {
+function hash(raw): string {
   return crypto.createHmac('sha256', SALT).update(raw).digest('hex');
 }
 
-function symEncrypt(credentials: Credentials) {
+function symEncrypt(credentials: Credentials): PreAsyncEncryptedTransmissionPayload {
   const buffer = Buffer.from(JSON.stringify(credentials), 'utf-8');
   const key = crypto.randomBytes(32);
   const iv = crypto.randomBytes(16);
@@ -86,6 +91,7 @@ function decrypt(payload: TransmissionPayload): Credentials {
   const decrypted = Buffer.concat([decipher.update(Buffer.from(payload.ciphertext, 'base64')), decipher.final()]);
   return JSON.parse(decrypted.toString('utf-8'));
 }
+
 
 // -------------------- Transport --------------------
 
@@ -107,7 +113,7 @@ function isValidLogin(payload: TransmissionPayload): boolean {
   const lookup = {};
   const hashFromDB = hash(password);
 
-  if (lookup[`${email} ${t.toString()}`]) { // can only use once, do a cache lookup
+  if (lookup[`securelogin ${email} ${t.toString()}`]) { // can only use once, do a cache lookup
     return false;
   }
 
@@ -119,8 +125,6 @@ function isValidLogin(payload: TransmissionPayload): boolean {
     return false;
   }
 
-
   return true;
-
 }
 

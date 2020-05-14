@@ -13,14 +13,18 @@ It is opinionated to simplify usage.
 ## Features
 
 1. Simple utility functions:
-    - `transmit()`
-    - `decrypt()`
+    - Client-side: `transmit(credentials: Credentials, publicKey: string)` 
+      - Returns encrypted `TransmissionPayload` to be transmitted from client-side to server.
+    - Server-side: `isValidLogin(payload: TransmissionPayload)` 
+      - Validates the received TransmissionPayload and returns a boolean if a credential is valid.
 
 2. Supports credentials expiry.
 
 3. Supports 1-time use credentials, to prevent replay attack.
 
-4. Password is stored hashed at rest.
+4. Passwords are stored hashed at rest.
+
+5. Supports arbitrarily large payload for arbitrarily long passwords and other data in payload.
 
 ## Sample output
 
@@ -30,16 +34,16 @@ $ npm test
 User's log in entry:
 { email: 'test@example.org',
   password:
-   'thisIsASECUREPA$$WORD, a very very long long one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis. Tristique senectus et netus et malesuada fames ac turpis. Semper risus in hendrerit gravida. Sed pulvinar proin gravida hendrerit lectus a. Nam libero justo laoreet sit amet. Viverra accumsan in nisl nisi scelerisque eu.',
-  t: 1589390328258 }
+   'thisIsASECUREPA$$WORD, a very long password. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis. Tristique senectus et netus et malesuada fames ac turpis. Semper risus in hendrerit gravida. Sed pulvinar proin gravida hendrerit lectus a. Nam libero justo laoreet sit amet. Viverra accumsan in nisl nisi scelerisque eu.',
+  t: 1589421158596 }
 
 After client-side encryption, send the following over API:
 { ciphertext:
-   'is5kDyz5TQz28873m5YUgKkUlcYreibmkiP7ExzbESPEl8aax37P7B9lFFo2B7tmniaoyM9TDO7rv3Yw/CaZRKJBEcBdZfr/AmiUpLlgx+qJ/BE6O1VALs0IGqa/CGDsJO+Do26CV338NHkBR77IBtiNWmLMa6zmXp8B3EBZGjAZfCQd3LfkONA6Aq+T4sQZa/pv3Lox/LS878p7SoDKa1ukhMs/8mWzECIM8z3kaDKAc+yfnfmVFog2tS5nKJ54XOfTNfx3vbdINE7WgSsg2T3z1lPNL3miYvPRe/ujVxpoxTupTMt1HVdZMG3VpeNkucBHuJ0AWvrrQ3hS322rzcwdr3cdEAbVF0u685iyHQy42iOd3hwCi6zd4c0ShXWcHrqnHjvjM5pSxk7FgjfNuh/6mVQd3WJMq4TWCYl54ChYCobNAA9kzr/fzwAgo3nUXT1yZGYkrCE40cshf9n6LNzPXFbJ0RWC4Q4gM94vJ5uxppIIRuOLhLed5XDx4vkKBSpJwhtakJzq3d0Zl6gE8caFuuQp4XHGclikNRJBszUBA4uOrmayo5t8oqVdws4CrBORBH6exDHdPYETB60M/cfV5vSZAkh704aQXRodEcJLxmieJdQNuCmgcwF6RVVD4YpkWPAC6DblxTqY8jRlrP6xLv9M4rPuqNYfYLl9qHo=',
+   '4QEI1N7AB+8AYYvL8n7G136O0Vw7aRqRADO4KUs7bwdvkNevkTZTwD8Td0ttLXfvKt3BMSe3AtMbgZzGVRi8tXLgpGQkC3lopi9EgjXOyI3KECh7cbJIjVl4wEOU5z5K3eZbOQdCJD+76qCweDZUVd1lv7lSuHmfXnZCJEy9rmXs7dG9ZL/hD0n4jd/09NSgDi6c0xThcI/IgodmusSHsKCITFtWp8ibLhdG8w9XFNecty5sIeA4KtMrR3rnduU6pBdRJbD25y/zUQ4UrcoXe4aP5yy4U4wOqDIFEjAPyZnoMmLWMAoSbFpCtajkzDVAEpZ5CXIUnTwbuHTGGpiiF++EfIZ0VjwlK0ahVLvbyydcHRZ7FvXya/OuyCH+qKvLyAZGnh1PA5Cg/jGJvFcV6FXH7vXRUfJog5rt8KMHhA8V/KuqLuudYmB9vcz8m1my/AfnbXfC7mH8iKsQWANMhfLDa0bpWUEK+hAi3cZOUH7PyEYgSYe249EuQH3AeqIxGI9enaNN9hhj4k3MbC8dutePO7/xPGK600PJ9IMY7SY3PxXQCFBubOg75DRz6Um1VThTbH70S7SpUMhZSWImp3X0+tP59vHEJd2JDtqj4xqLzXuFwN5OBgR/SOKABWiseoQQPcAPLcl7U/D/YRU/2A==',
   key:
-   'lc6hkWkDH+VTui9YZJwTp47o5XB9epR0cKneENAvdpscyjnoK4TJE5WKeaCC7hkKZe++bhI+muM4GAXBT7PSirDBiYcN0mUkutMpyJbYc9q/MTcpdupLWlr+55o0rIgA0dRVV/jC54bx05EOPKY4pzw+KeowggCyylsOLSEf62OQY0tDxdCX4yEvKVJtMzAmok1FYWFhRanH7PZ5E8uwiVaAaKCn/97rKU6lCg/q08ozSSSt5lIsA5wU1wf7X9FvAMXEFn57p18k9Bhg8ysO9QVQmYoMSMr6S1BhqBWPDC2badhjvbp++RkkAK1L1aJl4Xw0pAiaLkHHrwEgMLSSZcXwmv18/Yxw9kucdRxqOvI5CrKZNChj8hhkLmmK0+JfjVVh4FrSYQGPfYB/cdo8bMSvOd19q82WyeplftujDYOXjqgP9/gVm5OeUhite5GkQYUCYz3stwy+SMV/XxGVqpnwvVx3sz1UtM53U3PJmhi+/JdQI1cf35hoWDEpJ7ryFANRSXebkNbAXi7pHmxp0Vwwe6/xu1R9uyps0vXlj8bO2nCFF1q83+j8pbxA5hMl+OzTXLJ/Jd/phlstVsvFkAAxhEbxL8q/EE9r6HR034v9lYaRMNsbJ/5FlYbRYVUi1ru+8K3zLut9cp/NH5jXh8fgsJux0q5y6be/vxI6C1w=',
+   'nSVJTNGgA2ioxnwc5ysxnSipqnKKv7V+p0XM5tUFrsPTNbua94ISabaaciNVjSCZ6UhlWDe7wldl/sGNdhZUl8b1vXhvmTcqSU/ZhJ5x6p5zuHZ05ORlxnNV0sKQpdRnNnh3GGmTcR4jNKiocU06nt0+O4crIkMFauq2AxcF3Zo/RFFHwxw1B3uBxFbCgM7Ox1M6hXkibABfcNUtGFFa9gpMY0CTiRBD42bKb+f2UIpYzZR2u6uNcQcpBozscBQwfSIJh95SBCt7N8EyEFIwDh2ZMWbvLoJyL1PuPTvudwr/bzFTjvwdvbN5wdnT3TxjPdGczi+CKyb3DOrMYChaoojqfD90EWmrAMciHMSEODhznZqcZKSFuLpUSXRhVquX0ZPOALi8VG+FxCynmTgSWyLko4epU8LnatcL9kMANRux6IBuo6Kx0837UpGV5y9y+GaLzU0TFMHQpWeFg7YRT8sOb18cHbxlHqDyYcNQ6Zud9CxF2nagQt1hBGgMpQgC4fMIWivdJaTxQ3Alf9pYu7RkA7g3LfX63PeyZOrRASp6i/y0g6mN+fFuShrwBK5Lk9QpGP7GJE3R9j9Cm0gDHzxS9BMR/qx9/YVlVZDqQgajoupalth2NiIuxUzW0Voy1WV2yoXpyYLL2P4mIc4iRl6k6+ubaawSXEC4AMZsBmE=',
   iv:
-   'pQtPKAtbrYYgWDOwu9/1HFEtNbFMvEfs7rylXvDGReFiHwCVs60GUpvNi//M+4lu3Cym13DkPxv/RrZcDhHk6FEgSSNjxif9DKZ+GI6Fay8RuyF1fJ0SbdIRWm4NqV1OzaxXuFKDXqiqbA+w3jFZSOCKSphaWAWlXgF0lB1iBqfyOwVhC2qNHEyoYZQbfSQ1Cpo62Hp48UuWUuA0diyQJ1D80fM2rHhXZFUIJSiwm40aPPKidkZ8IsFpTtFu5yb47BoOiwGhtTZJSqWnbvKiLWr0Dp0zio5fOzkHSeoa2AxopQILsWPYMCC9vITNkqrD70VooFBgf6icHDQzekpR3IlohEvbeoD8mvdLOKHr8WcWQiX7G8jYRZEAvZ30nDdYljdhJkPunHeNUHWmlhz1wqlpDJ/aAAVSdfXnqx5hH28TOGud/6oSNdnAuLRV7SskNMr8a9PTHF4uCzUF9QStV+jn3oa1QviPdAMfCckUIbwKGDUdR8ne9Ka48zu8AEgiyforYvkoqLZJjGj8VOFoFAEczzKlNbxNi0KczzqBBxnFEsEGAMCNESHgSR4fB0Me5QDYYuXqr6bgRF0L8CrwCO4ZYRE4WWZmBJN7aN74MPyLQlaBQcCNxeqbybzq/qyJEVWfhw0MaOA8Dvx/bRICxJfPRFWQ5toGK/KdtElhI/8=' }
+   'PTTEpbbTrClI7oDd6xoQ0LNMPxGNRohKAPwhgYSGnPXIgDqSQCMZ6+xXHwOrIrCxFiWFQEHGsN51Ut92Rd8K3n2l9yi0qNQKZ9Na1ED2cQnwNxOBQ3IMYE2eCCMp9Xtt0qBzLIU7PIY/maKZJkuE5Gd4WbtjvA2jwWi376/GKrdC5HqprvcFh38xCJ1yhTfy7HaM3W3i/f0kwpjUszLdsGm3YLJskwAqBaVoANuBK1ItlW83ydegiwVKipVDV6XlaSfIoUWOEATeaL6TItg/ZPPR6H0nKCxVjfRdiX4c6Ju0fjWB6OsuslSy67dRrYXWDy84IM2EDHtCFCFCO0ZfQ12r4yZXMt/t5+gIYW1/9POL+HH5E5IAA/LehSssA/mFGS6rr3F1GX/IHGsiAdbaGJedDQ/lMGJjzrqM0UCgcOaHl1I46TjPfXaRo1wAx60NlqBdlpsu6irqOIf5FGNJDTd03GrQJC2T4E3egQ5O44/2gUE/2EzXElbHNBf/uRV7H4WGIcME6sQ5UQ+kyyWZfaixye0WDvsk16MHCL+HewufmrTssb3xhGaxsgrvbrkjvBMWhsaEUt9VoR47Sk0zhxMeqhaUn8AWzaBEh5GocsMvCFuaNM4+nnkMXYEmblhCLExp1sNUx9IyLrvv5HNBzZ1AZRcAQS9V8SuOtG+TvWg=' }
 
 Validate the transmission payload at server-side:
 true

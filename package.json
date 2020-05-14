@@ -11,6 +11,10 @@
     "start": "ts-node index.ts",
     "test": "npm start"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Zynesis <collab@zynesis.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zynesis/secure-password-transport.git"
+  }
 }
